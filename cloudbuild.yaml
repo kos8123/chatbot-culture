@@ -1,0 +1,39 @@
+steps:
+  - name: python  #使用python環境進行程式碼測試
+    id: install dependencies
+    entrypoint: pip
+    args: ["install", "-r", "requirements.txt", "--user"]  #安裝套件
+  - name: python
+    id: test
+    env:
+      - "GOOGLE_GEMINI_API_KEY=AIzaSyBMNX5YQ0gUmaA1qf2gtClFWMBivfM1EFs"
+      - "ChannelAccessToken=Zq6Cuekin2jOcNU9Vuzrb6sfXI597NSTq6mVyPw8EsMBSLGVmFxL1DW2WoSRol5Sjjch4yHbV+QfLLQ0HUVwLYRr+5qWvshUqc0RUBOkxypiJr91S6Dylq4JaVDEKV3ooOOGsByAzjoUim4QZw951gdB04t89/1O/w1cDnyilFU="
+      - "ChannelSecret=7205f9b2b9bc98c5130af18975fe5d97"
+      - "FIREBASE_URL=https://cookie-b75f0-default-rtdb.firebaseio.com"
+    entrypoint: python
+    args: ["main.py"]  #執行程式
+  - name: gcr.io/cloud-builders/gcloud #使用gcloud sdk進行部屬
+    id: deploy
+    script: | 
+      #!/bin/sh 
+      gcloud functions deploy line-bot-2 \
+      --no-gen2 \
+      --region=asia-east1 \
+      --runtime=python311 \
+      --source=. \
+      --entry-point=linebot \
+      --trigger-http \
+      --allow-unauthenticated \
+      --memory=1GB \
+      --security-level=secure-always \
+      --set-env-vars \
+          GOOGLE_GEMINI_API_KEY=AIzaSyBMNX5YQ0gUmaA1qf2gtClFWMBivfM1EFs,ChannelAccessToken=Zq6Cuekin2jOcNU9Vuzrb6sfXI597NSTq6mVyPw8EsMBSLGVmFxL1DW2WoSRol5Sjjch4yHbV+QfLLQ0HUVwLYRr+5qWvshUqc0RUBOkxypiJr91S6Dylq4JaVDEKV3ooOOGsByAzjoUim4QZw951gdB04t89/1O/w1cDnyilFU=,ChannelSecret=7205f9b2b9bc98c5130af18975fe5d97,FIREBASE_URL=https://cookie-b75f0-default-rtdb.firebaseio.com
+options:
+  logging: CLOUD_LOGGING_ONLY
+  
+
+
+
+
+
+
